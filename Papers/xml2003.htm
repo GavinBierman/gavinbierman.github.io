@@ -1,0 +1,31 @@
+<html>
+<xml id=XSL src="gca2html.xslt"></xml>
+<xml id=XML src="XML 2003.xml"></xml>
+
+<script language="jscript">
+function ReportError(doc) {
+   alert("Error:"+doc.parseError.reason);
+}
+function Transform() 
+{
+    // the xml islands are now loaded, but we need MSXML2.DOMDocuments to do XSLT.
+    var dom2 = new ActiveXObject("MSXML2.DOMDocument");
+    if (!dom2.load(XML.XMLDocument)) {
+      ReportError(dom2);
+      return;
+    }
+    var xsl2 = new ActiveXObject("MSXML2.DOMDocument");
+    if (!xsl2.load(XSL.XMLDocument)) {
+      ReportError(xsl2);
+      return;
+    }
+    RESULT.innerHTML = dom2.transformNode(xsl2);
+}
+</script>
+<script for=window event=onload language=jscript>
+   Transform();
+</script>
+
+<DIV id=RESULT ></DIV>
+
+</html>

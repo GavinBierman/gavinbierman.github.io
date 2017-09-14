@@ -1,0 +1,1727 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Programming with Circles, Triangles and Rectangles</title>
+<meta name="keywords" content="API, C#, Data interchange, Data representation, Database, Datatypes, DTD, Integration, Java, JDBC, JAXP, Objects, Query language, Relational database, RELAX NG, Schema, SOAP, SQL, Type systems, Validation, W3C XML Schema, XML, XPath, XQuery" />
+<meta name="author" content="Erik Meijer" />
+<meta name="author" content="Wolfram Schulte" />
+<meta name="author" content="Gavin Bierman" />
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+<meta content="text/css" http-equiv="Content-Style-Type" />
+<style type="text/css">
+ul.simple {list-style-type: none}
+ul.bulleted {list-style-type: disc}
+ul.dashed {list-style-type: square}
+ol.arabic {list-style-type: decimal}
+ol.ualpha {list-style-type: upper-alpha}
+ol.uroman {list-style-type: upper-roman}
+ol.lalpha {list-style-type: lower-alpha}
+ol.lroman {list-style-type: lower-roman}
+ol.ftnote {list-style-type: decimal}
+    </style>
+</head><body>
+<h1 class="title">Programming with Circles, Triangles and Rectangles</h1>
+<p class="keyword">
+<i class="keywordHeader">Keywords: </i>
+<a title="API" id="K1.API" />API, <a title="C#" id="K2.C#" />C#, <a title="Data interchange" id="K3.Data.interchange" />Data interchange, <a title="Data representation" id="K4.Data.representation" />Data representation, <a title="Database" id="K5.Database" />Database, <a title="Datatypes" id="K6.Datatypes" />Datatypes, <a title="DTD" id="K7.DTD" />DTD, <a title="Integration" id="K8.Integration" />Integration, <a title="Java" id="K9.Java" />Java, <a title="JDBC" id="K10.JDBC" />JDBC, <a title="JAXP" id="K11.JAXP" />JAXP, <a title="Objects" id="K12.Objects" />Objects, <a title="Query language" id="K13.Query.language" />Query language, <a title="Relational database" id="K14.Relational.database" />Relational database, <a title="RELAX NG" id="K15.RELAX.NG" />RELAX NG, <a title="Schema" id="K16.Schema" />Schema, <a title="SOAP" id="K17.SOAP" />SOAP, <a title="SQL" id="K18.SQL" />SQL, <a title="Type systems" id="K19.Type.systems" />Type systems, <a title="Validation" id="K20.Validation" />Validation, <a title="W3C XML Schema" id="K21.W3C.XML.Schema" />W3C XML Schema, <a title="XML" id="K22.XML" />XML, <a title="XPath" id="K23.XPath" />XPath, <a title="XQuery" id="K24.XQuery" />XQuery</p>
+<p class="author">
+<span class="authorName">Erik Meijer</span>
+<br />Technical Lead
+<br />Microsoft Webdata
+<br />Redmond
+<br />WA
+<br />USA
+<br />
+<a href="mailto:emeijer@microsoft.com" class="email">emeijer@microsoft.com</a>
+<br />
+<a href="http://www.research.microsoft.com/~emeijer" class="web">http://www.research.microsoft.com/~emeijer</a>
+</p>
+<p class="bioHeader">
+<i>Biography</i>
+</p>
+<blockquote class="bio">
+<p>Erik Meijer is a technical lead in the WebData group at Microsoft where he currently works on language design and type-systems for data integration in programming languages. Prior to joining Microsoft he was an associate professor at Utrecht University and adjunct professor at the Oregon Graduate Institute. Erik is one of the designers of the standard functional programming language Haskell98.
+</p>
+</blockquote>
+<p class="author">
+<span class="authorName">Wolfram Schulte</span>
+<br />Researcher
+<br />Microsoft Research
+<br />Redmond
+<br />WA
+<br />USA
+<br />
+<a href="mailto:schulte@microsoft.com" class="email">schulte@microsoft.com</a>
+<br />
+<a href="http://www.research.microsoft.com/~schulte" class="web">http://www.research.microsoft.com/~schulte</a>
+</p>
+<p class="bioHeader">
+<i>Biography</i>
+</p>
+<blockquote class="bio">
+<p>Wolfram Schulte is a researcher at Microsoft. He is interested in all aspects of software design and development for reliable systems. Currently he leads a research project focused on advanced technologies for software testing. He has also made technical contributions to Microsoft's data-oriented programming languages.  Before Microsoft, Wolfram was assistant professor for Computer Science at the University of Ulm and at the Technical University Berlin.
+</p>
+</blockquote>
+<p class="author">
+<span class="authorName">Gavin Bierman</span>
+<br />University Lecturer
+<br />University of Cambridge Computer Laboratory
+<br />Cambridge
+<br />England
+<br />United Kingdom
+<br />
+<a href="mailto:Gavin.Bierman@cl.cam.ac.uk" class="email">Gavin.Bierman@cl.cam.ac.uk</a>
+<br />
+<a href="http://www.cl.cam.ac.uk/~gmb/" class="web">http://www.cl.cam.ac.uk/~gmb/</a>
+</p>
+<p class="bioHeader">
+<i>Biography</i>
+</p>
+<blockquote class="bio">
+<p>
+Gavin Bierman is a University Lecturer (Associate Professor) at the
+University of Cambridge Computer Laboratory. His research interests
+include the semantics of programming languages, type systems, database
+query languages, semi structured data, and proof theory. 
+</p>
+</blockquote>
+<hr class="upperBorder" />
+<h2 class="abstractHeader">Abstract</h2>
+<hr class="lowerBorder" />
+<div class="abstract">
+<p>
+This paper proposes extending popular object-oriented programming
+languages such as C#, VB or Java with native support for XML. In our
+approach XML documents or document fragments become first class
+citizens. This means that XML values can be constructed, loaded,
+passed, transformed and updated in a type-safe manner. The type system
+extensions, however, are not based on XML Schemas. We show that XSDs
+and the XML data model do not fit well with the class-based nominal
+type system and object graph representation of our target
+languages. Instead we propose to extend the C# type system with new
+structural types that model XSD sequences, choices, and all-groups. We
+also propose a number of extensions to the language itself that
+incorporate a simple but expressive query language that is influenced
+by XPath and SQL. We demonstrate our language and type system by
+translating a selection of the XQuery use cases.
+</p> 
+</div>
+<hr class="upperBorder" />
+<h2 class="tocHeader">Table of Contents</h2>
+<hr class="lowerBorder" />
+<p class="toc">
+<b>
+<a href="#S1.">APIs and Programming Languages</a>
+</b>
+<br />
+<b>
+<a href="#S2.">Programming XML using APIs</a>
+</b>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S2.1">Integrating XML into a host language</a>
+<br />
+<b>
+<a href="#S3.">The mismatch between XML and object data-models</a>
+</b>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S3.1">Edge-labelled vs. Node-labelled</a>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S3.2">Attributes versus elements</a>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S3.3">Elements versus complex and simple types</a>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S3.4">Multiple occurrences of the same child element</a>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S3.5">Anonymous types</a>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S3.6">Substitution groups vs derivation and the closed world assumption</a>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S3.7">Namespaces, namespaces as values</a>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S3.8">Occurence constraints part of container instead of type</a>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S3.9">Mixed content</a>
+<br />
+<b>
+<a href="#S4.">The Xen data-model</a>
+</b>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S4.1">XML as syntax for object literals</a>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S4.2">Xen type system</a>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S4.3">Object literals</a>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S4.4">Embedded expressions</a>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S4.5">The Xen validation rules</a>
+<br />
+<b>
+<a href="#S5.">New syntax</a>
+</b>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S5.1">Generators and Iterators</a>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S5.2">Lifting</a>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S5.3">Filtering</a>
+<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+<a href="#S5.4">Apply-to-all</a>
+<br />
+<b>
+<a href="#S6.">XQuery use cases</a>
+</b>
+<br />
+<b>
+<a href="#S7.">Future Work</a>
+</b>
+<br />
+<b>
+<a href="#S8.">Conclusions</a>
+</b>
+<br />
+<b>
+<a href="#S.Acknowledgements">Acknowledgements</a>
+</b>
+<br />
+<b>
+<a href="#S.Bibliography">Bibliography</a>
+</b>
+<br />
+</p>
+<h2>
+<a id="S1.">APIs and Programming Languages</a>
+</h2>
+<p>
+Modern programming languages now come in two parts: the programming language proper, and a set of APIs. The relationship between the language and the API is an interesting one. Whilst the language is in some senses master and the API slave, a closer look reveals that in fact they form a symbiosis; an API only makes sense in the context of a programming language and a programming language becomes interesting if it has access to a rich set of APIs.
+</p>
+<p>
+Just like biological artifacts, this symbiosis is subject to evolution. A heavily used part of the API or common programming pattern is a candidate for promotion to the host programming language. We are all familiar with this situation: we can't imagine a language where numerals, strings, or arrays were available purely via APIs!   
+</p>
+<p>
+New application areas are suggesting new candidates for the first-class world of the programming language. Consider the language Rebol (<a href="http://www.rebol.com">http://www.rebol.com</a>): besides the usual numerals, strings and booleans, the core language supports literals for a wide range of other types such  as URLs, dates, money, etc. SQL has at its heart the table data type, but it also has a range of first-class data types relevant for business database applications, such as date, timestamp and interval. Even a general-purpose language such as C# <a class="bibref" href="#CSharp">
+<b>[C# Specification]</b>
+</a>  has integrated ideas such as garbage collection, objects, properties, indexers, events, and iterators into the language instead of exposing these concepts via APIs such as malloc/free, COM, or using programming patterns such as <code>GetXXX</code>/<code>SetXXX</code>.   
+</p>
+<p>
+To be concrete, consider the following example from C#. Assume that we have a collection type that implements <code>System.IEnumerable</code>. Given a collection object, <code>ts</code>, of such a type we find ourselves frequently writing code such as the following which executes some common piece of code, here written <code>s</code>, on each element of the collection:
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  IEnumerator e = ((IEnumerable)ts).GetEnumerator();
+  try {
+     while(e.MoveNext()) {  T t = (T)e.Current; s; }
+  } finally {
+     IDisposable d = e as System.IDisposable;
+     if(d != null) d.Dispose();
+  }</pre>
+</td>
+</tr>
+</table>
+<p>
+This programming pattern appears so often that C# has, and Java will soon have, a first-class language construct, <code>foreach(T t in ts)s</code>, which is intended to denote the same code. Not only does this make code more compact and readable, it also reduces sources of potential bugs and frees the compiler to make possible optimizations. </p>
+<p>
+The problem facing the programming language designer is not only
+identifying the "heavily used APIs" and "common programming patterns"
+mentioned earlier but also tastefully realizing them as first-class language features or constructs. Bolting on random features leads to language bloat, potentially destroying any coherence the language may have had. In addition one hopes that by promoting a feature from an API it will be  better supported given its existence in the language. We will see examples of this later. Clearly this is a tough problem which requires serious research (first) as well as some experimentation.
+</p>
+<p>
+In our opinion three areas that are ripe for liberation from their lowly API status are (a) data-access, (b) concurrency and (c) security. In this paper we concentrate on the first area: data-access. We discuss briefly concurrency in the future work section. For an interesting take on security we recommend the model of Fournet and Abadi <a class="bibref" href="#FournetAbadi">
+<b>[Fournet and Abadi]</b>
+</a> .    
+</p>
+<p>
+We shall fix our attention on object-oriented programming languages, exemplified by C# and Java <a class="bibref" href="#Java">
+<b>[Java Language Specification]</b>
+</a> . Objects are the "circles" in our title. Thus when considering liberating an API, it will be into a host language that is object-oriented. In fact, in this paper the host language is C#, but what we say applies equally to Java, Visual Basic, or any statically typed object-oriented language. 
+</p>
+<p>
+The rest of the paper considers the promotion of data-access APIs into C#. The data we are interested in is XML. This is the "triangle" in the title, reflecting the tree/graph-like structure of XML documents. First we motivate why XML support should be a first-class feature of a language. Then we argue that this support can not be offered to arbitrary XML documents. We then introduce Xen, which is our hypothetical extension of C# with first-class XML support. We give both details of the language and its type system, as well as a number of examples to illustrate its elegance and expressive power.
+</p>
+<p>
+The simple example program below gives a flavor of our language. It
+defines two types, <code>card</code> and <code>logo</code>, that
+together model simple business cards (taken from <a href="http://www.brics.dk/~amoeller/XML/schemas/">http://www.brics.dk/~amoeller/XML/schemas/</a>). It then creates a new card instance, <code>c</code>, using an XML object literal and uses a path-expression to print all the fields of the card.
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  public class card {
+    sequence{
+      string  name;
+      string  title;
+      string  email;
+      string? phone;
+      logo?   logo;
+    };
+  }
+
+  public class logo {
+    attribute string url;
+  }
+
+  public class Test {
+
+      static void Main() {
+        card c = &lt;card&gt;
+                   &lt;name&gt;John Doe&lt;/name&gt;
+                   &lt;title&gt;CEO, Widget Inc.&lt;/title&gt;
+                   &lt;email&gt;john.doe@widget.com&lt;/email&gt;
+                   &lt;phone&gt;(202) 456-1414&lt;/phone&gt;
+                   &lt;logo url="widget.gif"/&gt;
+                 &lt;/card&gt;;
+        c.*.{ Console.WriteLine(it); };
+      }
+  }
+</pre>
+</td>
+</tr>
+</table>
+<h2>
+<a id="S2.">Programming XML using APIs</a>
+</h2>
+<p>
+One of the problems with the current API-based approach of programming against XML is that these APIs tend to abuse strings to represent the literals of the various (non-string) types such as documents and queries that the API exposes. As an example let us consider how to program against the XML data model using the <code>System.Xml</code> library of .NET. In the code below the <code>SelectNodes</code> method of the <code>XmlDocument</code> class takes a string argument that represents an XPath expression that will be executed against the document instance. Similarly, the <code>SelectSingleNode</code> method on <code>XmlElement</code> takes a string which is an XPath expression intended to select <code>XmlNodes</code>:
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  int GetTotalByZip(XmlDocument d, int zip) {
+      int total = 0;
+      string q = string.Format("orders/order[@zip={0}]/item", zip);
+      foreach (XmlElement x in d.SelectNodes(q)) {
+        XmlNode price = x.SelectSingleNode("price");
+        XmlNode qty = x.SelectSingleNode("quantity");
+        int p = Decimal.Parse(price.InnerText);
+        int q = Decimal.Parse(qty.InnerText);
+        total += p*q;
+      }
+      return total;
+  }
+</pre>
+</td>
+</tr>
+</table>
+<p>
+Using strings to represent XPath programs is not only pretty clumsy (i.e. using <code>String.Format</code> to pass parameters from C# to XPath) but also annihilates all possibilities for static checking. Perhaps more importantly passing strings that represent programs is often a security risk ("script code injection"). Also note that because result values are also passed as strings, <code>XmlDocument</code> programming involves a lot of expensive string to type coercions.
+</p>
+<p>
+Hence, as a rule of thumb, we suggest that should one see an API that uses strings as a representation for some other important artifact, then this API requires re-designing and/or consideration for promotion to the programming language.  
+</p>
+<p>
+Using this rule of thumb, the Java programmer using JDBC <a class="bibref" href="#JDBC">
+<b>[JDBC]</b>
+</a>   or the C# programmer using ADO.Net <a class="bibref" href="#ADO">
+<b>[ADO .Net]</b>
+</a>  will quickly conclude, as we do, that support for database tables and queries could be better provided within the programming language, as opposed to the rather poor support provided by the JDBC or ADO.Net APIs. The reader will notice that the proposals in this paper also provide first-class language support for database tables and queries -- the "rectangles" in the title.
+</p>
+<h3>
+<a id="S2.1">Integrating XML into a host language</a>
+</h3>
+<p>
+There is a wide spectrum of possibilities for moving XML support from the API level into a first-class language feature. Currently the most popular technique is to use some form of mapping from XML to the host language. There exist a plethora of such databinding tools (see <a href="http://homepages.inf.ed.ac.uk/wadler/xml/">http://homepages.inf.ed.ac.uk/wadler/xml/</a> for a list of links), the Microsoft .NET environment contains a tool called xsd.exe that can translate between XSD schema and CLR types <a class="bibref" href="#xsd">
+<b>[xsd.exe]</b>
+</a> ; for Java there is the JAXB tool <a class="bibref" href="#JAXB">
+<b>[JAXB]</b>
+</a> . BEA XMLBeans is an interesting hybrid that allows the API approach and the databinding approach to coexist <a class="bibref" href="#XMLBeans">
+<b>[XMLBeans]</b>
+</a> . 
+</p>
+<p>
+Using these tools we can, for example, map an XSD schema for <code>orders</code> and <code>items</code> into a corresponding set of classes and then program against them in the following way:
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  int GetTotalByZip(orders d, int zip) {
+    ArrayList items = new ArrayList();
+    foreach(order o in d){ if(o.zip == zip) items.Add(o.item); }
+    int total = 0;
+    foreach (item x in items) total += x.price*x.quantity;
+    return total;
+  }
+</pre>
+</td>
+</tr>
+</table>
+<p>
+The main advantage is that via the mapping XML values are represented
+in the strongly typed world of C#. It is perhaps also worth pointing out that this code would be further improved with the use of generic collections. These will soon be added to both C# and Java.
+</p>
+<p>
+This mapping technology works reasonably well, but in practice we find that there are some annoying mismatches that makes this technology harder to use than might have been expected. In essence this mapping technique is dodging the fundamental impedance mismatch between XML and the host language. As we will see later, there is often no natural counterpart in C# (or Java) for many XSD constructs and vice versa. In fact the XPath/Infoset data-model and the usual object data-models have very little in common. 
+</p>
+<p>
+One final problem: even after the mapping of XSD schema into classes, we can see clearly in the example code that we have nothing as high-level and expressive as XQuery/XPath in C#. Thus queries have to be written using lower-level loops and conditionals. Whilst C# ensures that this is done type correctly, the resulting code is verbose and hard to maintain. Hence even if there was a perfect mapping between XML and objects at the type-level, we still would lack the expressive power of path expressions in the object-oriented programming language.
+</p>
+<p>
+In conclusion, we can see that this "databinding" approach boils down
+to hiding XML instead of embracing it. We are interested in finding a
+clearer solution. In order to successfully promote XML support from
+the API to the language level we shall first compare both models
+carefully. After this comparison we will argue that the inherent
+impedance mismatch between the XML and object data-models suggests
+that we should both modify the host object language to enhance XML
+support and compromise full XML fidelity. This leads to an elegant
+language design that incorporates the strengths of both data-models
+within a coherent whole: a language ideal for circles, triangles and
+rectangles. 
+</p>
+<h2>
+<a id="S3.">The mismatch between XML and object data-models</a>
+</h2>
+<p>
+In this section we compare the XML and object data-models concentrating on the deep mismatches between them. We give details of several substantial differences between the models that we contend are inherent and thus represent serious obstacles to the promotion of full XML support to an object-oriented programming language. 
+</p>
+<p>
+In what follows we will assume that the reader is familiar with the basic details of XML Schema (a useful primer can be found at <a href="http://www.w3.org/TR/xmlschema-0/">http://www.w3.org/TR/xmlschema-0/</a>) and the XPath 2.0 Data Model (<a href="http://www.w3.org/TR/xpath-datamodel/">http://www.w3.org/TR/xpath-datamodel/</a>). 
+</p>
+<h3>
+<a id="S3.1">Edge-labelled vs. Node-labelled</a>
+</h3>
+<p>
+Probably the deepest and most fundamental difference between the XML and the object data-model is that the former assumes node-labelled trees/graphs (see page 33 of <a class="bibref" href="#DoTW">
+<b>[Data On The Web]</b>
+</a> ) while the latter assumes edge-labelled trees/graphs. This clearly represents a profound dichotomy between the two worlds, yet at best many people seem unaware of this difference, and at worst confuse the two.  
+</p>
+<p>
+To make the clash concrete, consider the following simple schema for a <code>Point</code> element that contains <code>x</code> and <code>y</code> child elements:
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+    &lt;element name="Point"&gt;
+      &lt;complexType&gt;
+        &lt;sequence&gt;
+          &lt;element name="x" type="integer" /&gt; 
+          &lt;element name="y" type="integer" /&gt; 
+        &lt;/sequence&gt;
+      &lt;/complexType&gt;
+    &lt;/element&gt;
+</pre>
+</td>
+</tr>
+</table>
+<p>
+Assuming the XML data-model, selecting the <code>x</code> child of a <code>Point</code> element <code>p</code> returns an element node with name <code>x</code>, parent <code>p</code>, type <code>string</code> and a single text node as a child node. Note that the type of the result is not <code>string</code>, but an element node that has as one of its properties the type of its <i>content</i>. Elemements are also types, types that describe the structure of nodes. It is a common misconception not to consider elements as proper types.
+</p>
+<p>
+Most people, including the authors of section 5 of the original SOAP specification (<a href="http://www.w3.org/TR/SOAP/">http://www.w3.org/TR/SOAP/</a>), believe that the above element declaration for <code>Point</code> corresponds to the following class declaration in the object world:
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+    class Point {
+      public int x;
+      public int y;
+    }
+</pre>
+</td>
+</tr>
+</table>
+<p>
+In this case, selecting the <code>x</code> field of a <code>Point</code> instance <code>p</code> returns an integer that has no name, parent, or any of the other properties that the "corresponding" element node has in the XML world. Also note that the top level element <code>Point</code> is mapped to a corresponding type <code>Point</code>, whereas the nested elements <code>x</code> and <code>y</code> are mapped to fields <code>x</code> and <code>y</code>, which are not types by themselves.
+</p>
+<p>
+In general, the different node types such as document, element, attribute, text, processing instructions, comments, and the properties of such nodes such as base-uri, node-name, parent, type, children, attributes, namespaces, nilled as exposed in the XPath data-model do not necessarily correspond to anything in the familiar object data-model. In other words triangles can't easily be made into circles. 
+</p>
+<h3>
+<a id="S3.2">Attributes versus elements</a>
+</h3>
+<p>
+In the XML world, there is an important distinction between elements
+and attributes. That distinction simply does not exist in the object
+world. For example, consider adding an attribute <code>&lt;attribute
+name="Color" type="string"/&gt;</code> to our
+example element <code>Point</code> above. This becomes an item in the attributes collection of a <code>Point</code> element <code>p</code>, which is distinct from the children collection and is accessed in XPath using the attribute instead of the child axis. 
+</p>
+<p>
+In the corresponding mapped class, <code>Color</code> would simply be
+represented using another field, no different from <code>x</code> and
+<code>y</code>. In particular it is accessed using normal member
+access; there is no equivalent of the axis. To ensure correct
+representation the fields denoting attributes should be restricted to
+primitive (simple) types, but that would require a rather ad-hoc
+extension to the object data-model. Finally, concepts like global
+attributes and attribute groups seem difficult to model if we assume
+that attributes are modelled as class members.
+</p>
+<h3>
+<a id="S3.3">Elements versus complex and simple types</a>
+</h3>
+<p>
+In the XML data-model a distinction is often made between elements and
+attributes on the one hand and simple and complex types on the other
+hand. However this is a little misleading because 
+element and attribute declarations actually define
+types. Perhaps a clearer and more meaningful distinction is that 
+XSD has stratified the world into two parts: elements and attributes
+to describe the nodes in the data model, and simple and complex types
+to describe the content of those nodes.  
+</p>
+<p>
+In the object-oriented world, this distinction is not usually made;
+indeed there is no mechanism to describe the structure of the members
+of a class declaration in isolation. Hence this is another difference
+between the two data-models.
+</p>
+<p>
+Unfortunately this difference leads to further problems with the
+mapping tools. As we noted earlier global element declarations and
+complex type declarations are mapped to classes, and local element
+declarations to field declarations inside these classes. The problem
+is now how to handle element references; they have no natural
+counterpart in the object data-model. 
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+    &lt;element name="Line"&gt;
+      &lt;complexType&gt;
+        &lt;sequence&gt;
+          &lt;element ref="Point" /&gt; 
+          &lt;element ref="Point" /&gt; 
+        &lt;/sequence&gt;
+      &lt;/complexType&gt;
+    &lt;/element&gt;
+</pre>
+</td>
+</tr>
+</table>
+<p>
+The rather clumsy solution chosen by databinding tools is to replace the element references with a copy of the actual element declaration it refers to.
+</p>
+<h3>
+<a id="S3.4">Multiple occurrences of the same child element</a>
+</h3>
+<p>
+In the XML data-model, a complex type is permitted to have several occurrences of the same child element. Consider, for example, the following declaration of a <code>Verse</code> element which has two <code>A</code> and two <code>B</code> children in a specific order: 
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+    &lt;element name="Verse"&gt;
+      &lt;complexType&gt;
+        &lt;sequence&gt;
+          &lt;element name="A" type="string" /&gt; 
+          &lt;element name="B" type="string" /&gt; 
+          &lt;element name="B" type="string" /&gt; 
+          &lt;element name="A" type="string" /&gt; 
+        &lt;/sequence&gt;
+      &lt;/complexType&gt;
+    &lt;/element&gt;
+</pre>
+</td>
+</tr>
+</table>
+<p>
+At this point the mapping of elements to fields breaks down as most object-oriented languages do not allow duplicated fields. The automatic mapping tools generally pick some ad-hoc way out -- for example, the xsd.exe tool will "invent" arbitrary new field names for the duplicate elements. Clearly this is a fragile and unsatisfactory solution.
+</p>
+<h3>
+<a id="S3.5">Anonymous types</a>
+</h3>
+<p>
+XSD allows element declarations to use anonymous types, rather than insisting that they all use named types. This immediately begs the question of how to resolve type equivalence of two elements using anonymous types: is it by structural equivalence or nominal equivalence? Rather depressingly the various XML specifications have not been terribly consistent nor stable on this matter. For example, the May 2003 XQuery and XPath data-model specification implies that every occurrence of an anonymous type is assigned an implementation-defined, globally unique type name. 
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+   &lt;element name="Foo"&gt;
+      &lt;complexType&gt;
+        &lt;sequence&gt;
+          &lt;element name="Bar" &gt; 
+            &lt;complexType&gt;
+              &lt;sequence&gt;
+                &lt;element name="x" type="integer"/&gt; 
+              &lt;/sequence&gt;
+          &lt;/complexType&gt;
+        &lt;/element&gt; 
+        &lt;element name="Baz" &gt; 
+          &lt;complexType&gt;
+            &lt;sequence&gt;
+              &lt;element name="x" type="integer"/&gt; 
+            &lt;/sequence&gt;
+          &lt;/complexType&gt;
+        &lt;/element&gt; 
+      &lt;/sequence&gt;
+    &lt;/complexType&gt;
+  &lt;/element&gt;
+</pre>
+</td>
+</tr>
+</table>
+<p>
+Given the declarations above, the type properties of a <code>Bar</code> node and of a <code>Baz</code> node would be different as each would be assigned a separate globally unique type name. 
+</p>
+<p>
+From a programming language perspective this is an unusual choice. A more meaningful approach would be to employ structural type equivalence for anonymous types. Of course, if the data-model only supports nominal type equivalence then we are left in a difficult situation when dealing with anonymous types. However, our opinion is that a solution that generates unique type names on the fly is an unsatisfactory one. In that case it is better to disallow anonymous types from the start.
+</p>
+<h3>
+<a id="S3.6">Substitution groups vs derivation and the closed world assumption</a>
+</h3>
+<p>
+XSD supports two forms of "inheritance": substitution groups for
+elements, and derivation by extension/restriction for complex and
+simple types. These two forms of inheritance are strangely intertwined
+where elements can only be in the same substitution group if their
+content types are related by derivation. This restriction reflects, as
+we have stated earlier, that complex/simple types describe the content
+of nodes.
+</p>
+<p>
+Most object-oriented languages only support what would roughly amount
+to derivation by extension: a subclass can add new fields and
+methods. However most languages also permit a subclass to hide or
+override members of the superclass. This unfortunately has no
+counterpart in the XML data-model; it is another mismatch.
+</p>
+<p>
+XSD distinguishes between simple types and complex types. At first
+glance simple types seem to correspond to primitive types in Java or
+C#. However, simple types in XSD can be derived from other simple
+types in order to further restrict the possible values of that
+type. Unfortunately primitive types in most object-oriented languages
+are <code>sealed</code> (<code>final</code>), and cannot be further specialized. The correspondence is again imperfect. 
+</p>
+<p>
+Another fundamental difference between the XML and the object data-models is that the former adopts a closed-world assumption with respect to substitution groups and derivation by extension/restriction. For example the XQuery typing rules assume that all elements of a substitution group are known when performing (static) type-checking of child access <a class="bibref" href="#Essence">
+<b>[The Essence of XML]</b>
+</a> . On the other hand an important feature of the object data-model is that it adopts an open-world assumption. When type-checking member access only the static type of the receiver type is assumed. 
+</p>
+<h3>
+<a id="S3.7">Namespaces, namespaces as values</a>
+</h3>
+<p>
+In the XPath data-model, namespace nodes exist as first-class values (although subsequently XPath 2.0 has deprecated the use of name-spaces as first class values). This is not the case in the usual object data-model. For example in C# namespaces are purely syntactic sugar;  from the point of view of the underlying runtime they don't exist. 
+</p>
+<p>
+In so far as the notion of namespaces exists in C#, the places where namespaces can be introduced, the places where qualified names can be used, and the actual first class status of namespaces, are much more restricted than in XML. For instance in C# or Java field names are never qualified. Again a feature in both models that at the surface appeared related has turned out to be different.
+</p>
+<h3>
+<a id="S3.8">Occurence constraints part of container instead of type</a>
+</h3>
+<p>
+In XSD occurrence constraints appear on element declarations, not on the underlying type of the children of that element. For instance, the element declaration for element <code>A</code> below states that <code>Foo</code> has at most 10 children named <code>A</code>:
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+   &lt;element name="Foo"&gt;
+      &lt;complexType&gt;
+        &lt;sequence&gt;
+          &lt;element name="A" type="string" maxOccurs="10"/&gt; 
+          &lt;element name="B" type="string"/&gt; 
+        &lt;/sequence&gt;
+      &lt;/complexType&gt;
+    &lt;/element&gt;
+</pre>
+</td>
+</tr>
+</table>
+<p>
+This is a natural thing to do when you consider elements as
+types. However, there is nothing that directly corresponds to this in
+the object data-model given that local element declarations are mapped
+to fields. Instead <code>Foo</code> would be expected to be mapped to
+a class that has a single field <code>A</code> of type
+<code>string[]</code>:   
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  class Foo {
+    string[] A;
+    string B;
+  }
+</pre>
+</td>
+</tr>
+</table>
+<p>
+This means something completely different! Class <code>Foo</code> has one member whose type is an array of <code>string</code> instances. As well as the obvious mismatch, there is nothing to restrict the size of the array, and <code>Foo</code> can have any number of <code>A</code> children. 
+</p>
+<p>
+The mismatch becomes even more pronounced once we start putting
+occurrence constraints on the <code>sequence</code>,
+<code>choice</code>, or <code>all</code> particles, such as in the
+example below. There are no simple counterparts in the object
+data-model. 
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  &lt;element name="Foo"&gt;
+    &lt;complexType&gt;
+      &lt;sequence maxOccurs="10"&gt;
+        &lt;element name="A" type="string"/&gt; 
+        &lt;element name="B" type="string"/&gt; 
+      &lt;/sequence&gt;
+    &lt;/complexType&gt;
+  &lt;/element&gt;
+</pre>
+</td>
+</tr>
+</table>
+<h3>
+<a id="S3.9">Mixed content</a>
+</h3>
+<p>
+The idea of mixed content reflects the schizophrenic nature of XML as data versus XML as documents.
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  &lt;element name="Bar"&gt;
+    &lt;complexType mixed="true"&gt;
+      &lt;sequence&gt;
+        &lt;element name="A" type="integer" maxOccurs="10"/&gt; 
+      &lt;/sequence&gt;
+    &lt;/complexType&gt;
+  &lt;/element&gt;
+</pre>
+</td>
+</tr>
+</table>
+<p>
+The children of the element instance <code>&lt;Bar&gt;aaa&lt;A&gt;0&lt;/A&gt;bbb&lt;A&gt;1&lt;/A&gt;ccc&lt;/Bar&gt;
+</code> would be a text node, an element node A, a text node, an element node A and another text node. Since objects represent data not documents, there is no natural interpretation for mixed content in the object world.
+</p>
+<h2>
+<a id="S4.">The Xen data-model</a>
+</h2>
+<h3>
+<a id="S4.1">XML as syntax for object literals</a>
+</h3>
+<p>
+The detailed examples in the previous section demonstrate that at a foundational level there is a significant gulf between the XML and object data-models <a class="bibref" href="#Dave">
+<b>[Impedance Mismatch]</b>
+</a> . In our opinion the impedance mismatch is too big to attempt a complete integration. 
+</p>
+<p>
+Given these problems, how are we to proceed? Our approach is to first take as our starting point the object data-model of our programming language. This is the model that programmers are familiar with, and that is supported by the underlying execution engine. Rather than trying to blindly integrate the complete XML data-model and the full complexity of schemas, we shall take a simpler design goal: We consider XML 1.0 <a class="bibref" href="#XML">
+<b>[XML 1.0]</b>
+</a>  as simply syntax for serialized object instances. We shall see in the rest of this paper the significant design advantages that follow from such a simple intuition. 
+</p>
+<p>
+Take the following XML fragment:
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  &lt;Point&gt;
+    &lt;x&gt;46&lt;/x&gt;
+    &lt;y&gt;11&lt;/y&gt;
+  &lt;/Point&gt;
+</pre>
+</td>
+</tr>
+</table>
+<p>
+We consider this to simply denote the XML serialization of an object of type <code>Point</code>, say <code>p</code>, that is constructed via the series of assignments <code>Point p = new Point(); p.x = 46; p.y = 11</code>. Even though the XML fragment is a valid instance of an <code>Point</code> element according to the XSD schema we gave earlier, none of the XML data-model properties will be exposed at the level of the programming language; the programmer just sees an instance of class <code>Point</code>. 
+</p>
+<p>
+Even though we have adopted a simple view of XML, in fact the object data-model and the corresponding type-system is not powerful enough to handle the rich scenarios that we envisage. In order to consume and generate a wide enough set of documents we need to enrich the type system with new type constructors such as unions, sequences and streams. These have been carefully chosen and designed so that they integrate coherently with the existing type system. Interestingly, the resulting types look very similar to Relax NG compact notation (<a href="http://www.oasis-open.org/committees/relax-ng/compact-20020607.html">http://www.oasis-open.org/committees/relax-ng/compact-20020607.html</a>), or DTDs written using XSD keywords. 
+</p>
+<p>
+We define XML fidelity as being able to serialize and deserialize as many possible documents that are expressible by some given XML schema language (<a href="http://www.xml.com/pub/a/2001/12/12/schemacompare.html">http://www.xml.com/pub/a/2001/12/12/schemacompare.html</a>), not as how closely we match one of the XML datamodels in our programming language once we have parsed an XML document. Although Xen by design doesn't support the entirety of the full XML stack, we believe that our type system and language extensions are rich enough to support many potential scenarios. For example we are able to cover the complete set of XQuery Use Cases <a class="bibref" href="#UseCases">
+<b>[XQuery Use Cases]</b>
+</a> , and we have written several large applications, some of them up to 50,000 lines, without running into significant fidelity problems. 
+</p>
+<h3>
+<a id="S4.2">Xen type system</a>
+</h3>
+<p>
+In this section we give some details of the Xen type system. Despite its considerable expressive power we have carefully designed this type system as a small, yet coherent extension of the C# type system. For reasons of space we can not describe all of the language in this paper, but it does support the entirety of the C# language. 
+</p>
+<p>
+First we consider Xen class declarations. Instead of having zero or
+more field declarations inside a class, we allow classes to have one
+content type and zero or more attributes, in addition to zero or more
+method declarations as usual. Let <code>C</code> denote class
+declarations, <code>I</code> identifiers, <code>T</code> types,
+<code>A</code> attribute declarations, and <code>M</code> method
+declarations. A Xen class declaration has the following general form: 
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  C ::= class I : I...I { T; A<i>*</i> M<i>*</i>  }
+</pre>
+</td>
+</tr>
+</table>
+<p>
+An attribute declaration is like a field declaration, but is decorated by the <code>attribute</code> keyword
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  A ::= attribute T I;
+</pre>
+</td>
+</tr>
+</table>
+<p>
+Attributes have no special semantics except for influencing the serialization format of types. In particular we have no special "axis" to distinguish between child and attribute access.
+</p>
+<p>
+A type is either a sequence type (corresponding to the XSD <code>&lt;sequence&gt;</code> particle, the DTD <code>(...,...)</code> construct), a choice type (corresponding to a C-style <code>union</code>, the XSD <code>&lt;choice&gt;</code> particle, or the DTD <code>(..|...)</code> construct), an all type (corresponding to the XSD <code>&lt;all&gt;</code> particle), a possibly empty stream type (corresponding to the XSD <code>minOccurs="0", maxOccurs="unbounded"</code> occurrence constraint, or the DTD <code>*</code> construct), 
+a nonempty stream type (corresponding to the XSD <code>minOccurs="1",
+maxOccurs="unbounded"</code> occurrence constraint, or the DTD
+<code>+</code> construct),  an option type (corresponding to the XSD
+<code>minOccurs="0", maxOccurs="1"</code> occurrence constraint, or
+the DTD <code>?</code> construct) or a named type that was introduced
+by a content class. Types are given by the following grammar. 
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  T ::= sequence{ ... T I<i>?</i> ; ...}
+     |  choice{ ... T I<i>?</i> ; ...}
+     |  all{ ... T I<i>?</i>; ...}
+     |  T* | T+ | T?
+     |  I
+</pre>
+</td>
+</tr>
+</table>
+<p>
+We use the phrase <code>T I</code>
+<i>?</i> to indicate that field names in Xen are optional.
+</p>
+<p>
+Subtyping relationships between these new types are defined based on
+their structure and not only by their name. Structural subtyping is
+nothing new. In a limited form it is already available in C# or
+Java. Suppose for example, that class <code>ColorPoint</code> is a
+subtype of class <code>Point</code>, then an array of
+<code>ColorPoint</code>s, (written <code>ColorPoint[]</code>) is a
+subtype of an array of <code>Point</code>s (written
+<code>Point[]</code>). In the same fashion, in Xen a stream of
+<code>ColorPoint</code>s (written as <code>ColorPoint*</code>) is a
+subtype of a stream of <code>Point</code>s (written as
+<code>Point*</code>). Similar covariance rules apply to the other
+structural types. It is beyond the scope of this paper to explain
+Xen's subtyping relationships in greater detail. Instead we refer
+interested readers to two accompanying papers 
+(<a class="bibref" href="#DPCOOL">
+<b>[Unifying Tables, Objects and Documents]</b>
+</a> , and 
+<a class="bibref" href="#PLDI">
+<b>[The Meaning of Xen]</b>
+</a> ). These papers also give some details on related programming languages that embrace XML such as Xtatic <a class="bibref" href="#Xtatic">
+<b>[Xtatic]</b>
+</a>  and CDuce <a class="bibref" href="#CDuce">
+<b>[CDuce]</b>
+</a> .
+</p>
+<p>
+To illustrate both the type system and the syntax of Xen we will take
+examples from the XQuery Use Cases. This defines a
+bibliography of books given by the following DTDs: 
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  &lt;!ELEMENT bib  (book* )&gt;
+  &lt;!ELEMENT book (title,(author+ | editor+), publisher, price)&gt;
+  &lt;!ATTLIST book  year CDATA  #REQUIRED &gt;
+</pre>
+</td>
+</tr>
+</table>
+<p>
+In fact the DTD for <code>book</code> is a nice example illustrating
+where current object-oriented languages fall short in defining rich
+content models. For example there is no equivalent notion of union types in Java
+or C# and no way to indicate that a collection should contain at least
+one element. 
+</p>
+<p>
+Below we give the Xen class declaration for <code>book</code>s. It
+states that a <code>book</code> has either at least one
+<code>editor</code> or at least one <code>author</code>, a
+<code>publisher</code> and a <code>price</code>, and a
+<code>year</code> attribute: 
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>  
+  public class book {
+    sequence{
+      string title;
+      choice{
+        sequence{ editor editor; }+;
+        sequence{ author author; }+;
+      }
+      string publisher;
+      int price;
+    }
+    attribute int year;
+  }
+</pre>
+</td>
+</tr>
+</table>
+<h3>
+<a id="S4.3">Object literals</a>
+</h3>
+<p>
+When serializing values of type <code>book</code> as XML, they will conform to the given DTD for <code>book</code>. However, why would you only use XML serialization outside the language? Xen internalizes XML serialized objects into the language, allowing programmers to use XML fragments as object literals. For instance, we can create a new instance of a <code>book</code> object using the following XML object literal:   
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  book b = &lt;book year="2004"&gt;
+             &lt;title&gt;C# Concisely&lt;/title&gt;
+             &lt;author&gt;
+               &lt;first&gt;Judith&lt;/first&gt;&lt;last&gt;Bishop&lt;/last&gt;
+             &lt;/author&gt;
+             &lt;author&gt;
+               &lt;first&gt;Nigel&lt;/first&gt;&lt;last&gt;Horspool&lt;/last&gt;
+             &lt;/author&gt;
+             &lt;publisher&gt;Addison-Wesley&lt;/publisher&gt;
+             &lt;price&gt;68.00&lt;/price&gt;
+           &lt;/book&gt;;
+</pre>
+</td>
+</tr>
+</table>
+<p>
+The Xen compiler contains a validating XML parser that analyzes the
+XML literal and "deserializes" it at compile time into code that will
+construct the correct book instance. This allows Xen programmers to
+treat XML fragments as first-class expressions in their code.
+</p>
+<h3>
+<a id="S4.4">Embedded expressions</a>
+</h3>
+<p>
+In addition to first-class XML object literals, Xen also allows arbitrary embedded code, using curly braces as escape syntax (where curly braces themselves are escaped using <code>\{</code> and <code>\}</code> respectively). As Xen is statically typed, the type of the embedded expression must be of an "allowable" type (see section <a class="xref" href="#Validation">
+<b>The Xen validation rules</b>
+</a>   for more details). In the following example we splice in the embedded expression <code>LookupPrice("C# Concisely")</code> to construct the price of our book. 
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+    book b = &lt;book year="2004"&gt;
+               &lt;title&gt;C# Concisely&lt;/title&gt;
+               &lt;author&gt;
+                 &lt;first&gt;Judith&lt;/first&gt;&lt;last&gt;Bishop&lt;/last&gt;
+               &lt;/author&gt;
+               &lt;author&gt;
+                 &lt;first&gt;Nigel&lt;/first&gt;&lt;last&gt;Horspool&lt;/last&gt;
+               &lt;/author&gt;
+               &lt;publisher&gt;Addison-Wesley&lt;/publisher&gt;
+               &lt;price&gt;{LookupPrice("C# Concisely")}&lt;/price&gt;
+             &lt;/book&gt;;
+</pre>
+</td>
+</tr>
+</table>
+<p>
+Of course embedded expressions can be used for attributes also, so we could use <code>&lt;book year={e}/&gt;</code> in the example above provided <code>e</code> is some expression of type <code>int</code> that computes the year of our book.
+</p>
+<p>
+The validation rules in Xen allows us to write particularly
+concise code when dealing with embedded expressions. Consider the
+following declaration of a <code>book</code> whose authors are computed by an embedded expression: 
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  book b = &lt;book year="2004"&gt;
+               &lt;title&gt;C# Concisely&lt;/title&gt;
+               { authors }
+               &lt;publisher&gt;Addison-Wesley&lt;/publisher&gt;
+               &lt;price&gt;68.00&lt;/price&gt;
+             &lt;/book&gt;;
+</pre>
+</td>
+</tr>
+</table>
+<p>
+According to the content type of <code>book</code>, the expected type for the embedded expression <code>{ authors }</code> is 
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  choice{ 
+    sequence{ editor editor; }+ 
+    sequence{ author author; }+
+  }
+</pre>
+</td>
+</tr>
+</table>
+<p>
+We'd like to be able to use the following declaration for <code>authors</code>.
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  author* authors = &lt;author&gt;
+                     &lt;first&gt;Judith&lt;/first&gt;&lt;last&gt;Bishop&lt;/last&gt;
+                    &lt;/author&gt;
+                    &lt;author&gt;
+                      &lt;first&gt;Nigel&lt;/first&gt;&lt;last&gt;Horspool&lt;/last&gt;
+                    &lt;/author&gt;;
+</pre>
+</td>
+</tr>
+</table>
+<p>
+The variable <code>authors</code> has type <code>author*</code>. This type is considered to allowable instead of the expected type according to the Xen validation rules because the set of documents described by the type <code>author*</code> is a subset of the set of documents described by the original union type. Thus the declaration is permitted with no explicit type conversions needed.
+</p>
+<h3>
+<a id="Validation" />
+<a id="S4.5">The Xen validation rules</a>
+</h3>
+<p> 
+The validation rules are defined using a relation <i>is allowable</i> between types. Let <code>S</code> and <code>T</code> be two types. We say that  <code>S</code> is allowable for <code>T</code> if the set of serialized XML documents of type <code>S</code> is a subset of the set of serialized documents for type <code>T</code>. It is the case that if <code>S</code> is implicitly convertible to <code>T</code> then <code>S</code> is allowable for <code>T</code>, but not necessarily the other way around. 
+
+For instance the serialized values of type <code>sequence{ A A }*</code> are the same as the serialized values of the type <code>A*</code>, but the type <code>sequence{ A A }*</code> is not implicitly convertible to the type <code>A*</code>.
+</p>
+<p>
+We do not put any restrictions on our class declarations and in
+particular we do not impose any non-ambiguity constraints. For example
+the following class declaration <code>A</code> is perfectly legal in
+Xen, even though it is obvious that the content model is ambiguous:
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  class a { int; }
+  
+  class As {
+    sequence{
+      choice{
+        sequence{ a a; a a; }
+        sequence{ a a; }
+      }
+      choice{
+        sequence{ a a; a a; }
+        sequence{ a a; }
+      }
+    }
+  }
+</pre>
+</td>
+</tr>
+</table>
+<p>
+The validator will attempt to validate a given object literal in all possible ways, and only flag an error if it did not find exactly one parse. When using ambiguous context-free grammars this is similar to the idea of using a general purpose parser such as GLR or Early <a class="bibref" href="#ASFSDF">
+<b>[ASF/SDF]</b>
+</a>  and demanding that each particular parse is unambiguous.
+</p>
+<p>
+In this case, the literal below is ambiguous, and the validator will generate a compile-time error
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  As a = &lt;As&gt;&lt;a&gt;1&lt;/a&gt;&lt;a&gt;2&lt;/a&gt;&lt;a&gt;3&lt;/a&gt;&lt;/As&gt;;
+</pre>
+</td>
+</tr>
+</table>
+<p>
+To disambiguate we can use embedded expressions and write
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  As a = &lt;As&gt;{&lt;a&gt;1&lt;/a&gt;&lt;a&gt;2&lt;/a&gt;}&lt;a&gt;3&lt;/a&gt;&lt;/As&gt;;
+</pre>
+</td>
+</tr>
+</table>
+<p>
+to indicate to the validator that we intend the first choice to be the two <code>a</code>'s and the second just one <code>a</code>. Of course we should be careful with ambiguous content models when values have to be serialized to the outside world where we cannot use embedded expressions.
+</p>
+<h2>
+<a id="S5.">New syntax</a>
+</h2>
+<p>
+In the previous sections we have seen how we can construct object instances using XML literals. However, for a language that processes XML it is just as important to be able to deconstruct, or more generally query values. For this purpose, we will introduce path expressions in Xen. These  are inspired by both XPath <a class="bibref" href="#XPath">
+<b>[XPath]</b>
+</a>  and SQL, but adapted to our extended object data-model. 
+</p>
+<h3>
+<a id="S5.1">Generators and Iterators</a>
+</h3>
+<p>
+Streams of values play an important role in many XML content types, for instance a <code>book</code> can have one or more <code>author</code>s or <code>editor</code>s. In Xen stream types <code>?</code>, <code>+</code>, and <code>*</code> all implement the <code>IEnumerable</code> interface and hence we can iterate over any stream using a <code>foreach</code> loop:
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+    book b = ...
+    author* authors = b.author;
+    foreach(author a in authors) Console.WriteLine(a);
+</pre>
+</td>
+</tr>
+</table>
+<p>
+Note that even though the content type of <code>book</code> says that a <code>book</code> has one or more <code>author</code>s, the result type of <code>b.author</code> is <code>author*</code> because it could be that the <code>book</code> has <code>editor</code>s not <code>author</code>s. (To be precise, the return type of <code>b.author</code> is <code>author+?</code>, which is according to Xen's type equivalences the same as <code>author*</code>. See our companion papers <a class="bibref" href="#DPCOOL">
+<b>[Unifying Tables, Objects and Documents]</b>
+</a>  and <a class="bibref" href="#PLDI">
+<b>[The Meaning of Xen]</b>
+</a>  for a more detailed account of Xen's type system.
+</p>
+<p>
+Whilst it is easy to traverse streams using <code>foreach</code> loops, it is still a little verbose compared to XPath. In the next couple of sections we discuss some of the features that we have added to Xen to make iteration over streams even simpler. Before describing them  we first need to tackle another problem, namely how to make it easy to <i>generate</i> streams. 
+</p>
+<p>
+The most convenient way to generate finite streams is to use the fact that
+the Xen type system defines an implicit conversion between sequences
+and streams. For example Xen considers <code>sequence{ Author;
+Author;}</code> to be a subtype of <code>Author*</code>. The following
+code is then type correct (where <code>new(..)</code> is the Xen sequence constructor).
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  author* authors = new(author1, author2);
+</pre>
+</td>
+</tr>
+</table>
+<p>               
+Of course, this only works for finite streams; it does not help us to generate more complex or infinite streams. For this we introduce <code>yield</code> statements. A method body that contains <code>yield</code> statements can "return" multiple times, each time yielding the next element of a stream. For example the method <code>FromTo(n,m)</code> below generates a stream of integers <i>n, n+1, ..., m</i> by yielding <i>(m-n)+1</i> times:
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  // FromTo(n,m) ==&gt; n, n+1, ...,m
+  int* FromTo(int n, int m){
+    for(int i=n; i=&lt;m; i++) yield i;
+  }
+</pre>
+</td>
+</tr>
+</table>
+<p>
+The concept of methods that return multiple times is also available in XQuery, which (confusingly) uses the <code>return</code> keyword instead of <code>yield</code>. It is also supported by several other programming languages including Icon, Clu, and Python, and will be in the next version of C#. 
+</p>
+<p>
+It turns out that especially for generators it is convenient to allow statement blocks as expressions. So for instance instead of having to define a separate method <code>FromTo</code> we can just use the block expression <code>{ for(int i=n; i=&lt;m; i++) yield i; }</code> of type <code>int*</code>.
+</p>
+<h3>
+<a id="S5.2">Lifting</a>
+</h3>
+<p>
+The most important difference between path expressions and ordinary member selection as found in object-oriented languages is the way path expressions lift (homomorphically extend) over structural types such as streams, sequences, and unions.
+</p>
+<p>
+Suppose that we have a <code>bibliography</code> that contains zero or more <code>book</code>s as its content model.
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  public class bibliography {
+    book* books;
+  }
+</pre>
+</td>
+</tr>
+</table>
+<p>
+and that given an instance <code>bib</code> of type <code>bibliography</code> we want to select all the <code>title</code>s of all the <code>book</code>s. The most natural way to write this query is by using the following path expression: 
+ </p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  string* titles = bib.books.title;  // Xen code
+</pre>
+</td>
+</tr>
+</table>
+<p>
+Note that the result type of the sub-expression <code>b.books</code>
+is <code>book*</code>. In C# or Java, the subsequent
+<code>title</code> member access would not be allowed as it would be assumed to be on the stream
+itself, rather than the elements of the stream. In Xen the notion of
+member access has been generalized to support this style of
+programming. Member access is defined to be lifted (mapped) over the
+stream and so the code above is valid and behaves as expected. In
+contrast we would have to write the following C# code to achieve the same effect.
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  string* getTitles(books bs){
+    foreach(book it in bs) yield it.title;
+  }
+  
+  string* titles = getTitles(bib.books); // C# code
+</pre>
+</td>
+</tr>
+</table>
+<p>
+Note how convenient the Xen code <code>b.books.title</code> is in comparison to the somewhat clumsy C# code. This is an example of where promoting XML access to the language level has allowed us to provide elegant support for a typical programming pattern. 
+</p>
+<p>
+A similar situation happens when we have an instance <code>b</code> of a choice type say <code>choice{ string; Button; }</code>. The most natural way to select the <code>BackColor</code> field of <code>b</code> is to write <code>b.BackColor</code>, which either returns <code>null</code> if <code>b</code> happens to be of type <code>string</code> or a value of type <code>Color</code> in case <code>b</code> is indeed of type <code>Button</code>. This is precisely what happens in Xen. Without such lifting we would be forced to define a new method that performs an explicit instance check to determine the actual type of <code>b</code>: 
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  Color? getBackColor(choice{string; Button; } b){
+    if(b is Button) return ((Button)b).BackColor;
+    return null;
+  }
+</pre>
+</td>
+</tr>
+</table>
+<p>
+and then use <code>getBackColor(b)</code> in place of Xen's more
+elegant <code>b.BackColor</code>.
+</p>
+<p>
+Finally, it nearly goes without saying that lifting of member
+access over sequence types is also extremely convenient. In fact, Xen
+automatically lifts member-access (including method calls) over all
+its structural types. As we have seen this yields elegant and compact
+code that is familiar to the XPath programmer. 
+</p>
+<h3>
+<a id="S5.3">Filtering</a>
+</h3>
+<p>
+Besides lifting, filters are another example of an XPath feature that is indispensable for writing concise code. Again we have promoted this vital programming pattern to a first-class language feature. Given a stream expression <code>e</code>, the Xen expression <code>e[p]</code> denotes the stream resulting from applying the filter <code>p</code> to each element. In the boolean predicate <code>p</code> the stream element can be referenced using the implicit variable <code>it</code>.
+</p>
+<p>
+For example given a <code>bibliography</code> of books,
+<code>bib</code>, we can select all books whose publisher is
+Addison-Wesley that are published after 1991 by the following filter
+expression. 
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+    book* AWbooks = 
+      bib.book[it.publisher == "Addison-Wesley" &amp;&amp; it.year &gt; 1991];
+</pre>
+</td>
+</tr>
+</table>
+<h3>
+<a id="S5.4">Apply-to-all</a>
+</h3>
+<p>
+Often we want to lift operations other than member-access and method
+invocation over a structural type. For example, suppose we want to
+collect the title and year of all books, or we want to print out all
+the titles of the books. Again we have promoted this common
+programming pattern to a first-class language feature; the apply-to-all block.  
+</p>
+<p>
+Given a stream expression <code>e</code> and a code-block <code>{ s }</code> where <code>s</code> is a Xen statement, the apply-to-all expression <code>e.{ s }</code> generates a stream resulting from executing the code-block for each element in the original stream (again <code>s</code> can contain the identifier <code>it</code> to denote the current stream element).
+</p>
+<p>
+To collect all titles and publication dates of a stream of
+Addison-Wesley books (henceforth called <code>AWbooks</code>) we
+apply the method body <code>{ return new(it.title, it.year); }</code>
+to the <code>AWbooks</code> stream as follows. 
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  sequence{string; int;}* bs
+   = AWBooks.{return new(it.title, it.year);};
+</pre>
+</td>
+</tr>
+</table>
+<p>
+In this case the return type of the apply-to-all block is <code>sequence{ string; int;}</code>. The result of the whole expression is a stream of type <code>sequence{ string; int;}*</code> that is built lazily.
+</p>
+<p>
+Apply-to-all blocks need not just be used to construct new streams. Printing out all the titles of the <code>AWbooks</code> books is simply a one liner:  
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  AWbooks.{ Console.WriteLine(it); }
+</pre>
+</td>
+</tr>
+</table>
+<p>
+Note that the return type of <code>{ Console.WriteLine(it); }</code> is <code>void</code>; therefore the result of the whole expression is <code>void</code>. Obviously <code>void</code> results cannot be consumed, thus it makes no sense to postpone the evaluation of <code>void</code> apply-to-all blocks. As a consequence, Xen evaluates the effect of <code>void</code> apply-to-all blocks eagerly.
+</p>
+<h2>
+<a id="S6.">XQuery use cases</a>
+</h2>
+<p>
+At this point we have described enough of the features of Xen to be able to express all the XQuery Use Cases <a class="bibref" href="#UseCases">
+<b>[XQuery Use Cases]</b>
+</a> . Due to lack of space we will restrict ourselves to just a few of the more interesting ones in this paper. 
+</p>
+<p>
+The first use case was covered earlier. It asks to list books
+published by Addison-Wesley after 1991, including their year and
+title. We solved it using a simple filter expression.
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+    book* AWbooks = 
+      bib.book[it.publisher == "Addison-Wesley" &amp;&amp; it.year &gt; 1991];
+</pre>
+</td>
+</tr>
+</table>
+<p>
+The second use case asks to create a list of all the title-author pairs, with each pair enclosed in a <code>result</code> element. In other words, the output is a stream of result elements where result is defined by the type <code>result</code>:
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  class result {
+    sequence{
+      string title;
+      author author;
+    }
+  }
+</pre>
+</td>
+</tr>
+</table>
+<p>
+This query can be expressed in several different ways, but the most concise one uses two nested apply-to-all blocks. For each <code>book</code> in the bibliography it remembers the <code>title</code>, and then for each <code>author</code> of the book, the nested apply-to-all block generates the required result element:
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  result* authors_and_titles =
+    bib.book.{ title = it.title;
+               return it.author.{ 
+                 &lt;result&gt;
+                   &lt;title&gt;{title}&lt;/title&gt;
+                   &lt;author&gt;{it}&lt;/author&gt;
+                 &lt;/result&gt;;}             
+             };
+</pre>
+</td>
+</tr>
+</table>
+<p>
+Conceptually, the return type of the query is a nested stream <code>result**</code>. Similar to XQuery, this is the same as <code>result*</code> according to the Xen typing rules.
+</p>
+<p>
+The fifth XQuery use case is interesting because it requires a join
+(in the sense of relational algebra) of results from two sources. This
+is where the rectangles of the title finally come into the picture. 
+</p>
+<p>
+The reader familiar with relational databases may have already
+realized that the Xen data-model subsumes the (nested) relational
+model. For example the SQL declaration:
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  CREATE TABLE Customer
+   ( name string NULL,
+     custid int);
+</pre>
+</td>
+</tr>
+</table>
+<p>
+corresponds to the following Xen declaration of a stream of sequence types:
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  sequence{ string? name; int custid; }* Customer;
+</pre>
+</td>
+</tr>
+</table>
+<p>
+In addition to the path queries that we have used up to
+now, Xen also supports first-class SQL-style select statements. SQL-style select expressions work on any stream, not only those that originate from an actual relational database.
+</p>
+<p>
+We can now handle the fifth use case, which asks to list for each book found at both booksellers <code>A</code> and <code>BN</code>, the <code>title</code> of the book and its <code>price</code> from each source. So the first task is to get the list of all books that are available at both <code>BN</code> and <code>A</code>. In SQL this is easily done using an (inner) join.  Using a <code>select</code> statement, we can easily select the <code>A</code> and <code>BN</code> books whose titles are the same, and produce a stream of the requested information:
+</p>
+<table class="codeBlock">
+<tr>
+<td>
+<pre>
+  A_BN =
+    select 
+      &lt;book-with-prices&gt;
+        &lt;title&gt;{a.title;}&lt;/title&gt;
+        &lt;price-A&gt;{a.price}&lt;/price-A&gt;
+        &lt;price-BN&gt;{bn.price}&lt;/price-BN&gt;
+      &lt;/book-with-prices&gt;
+    from 
+      a  in Abooks.book,
+      bn in BNbooks.book 
+    where 
+      a.title == b.title
+</pre>
+</td>
+</tr>
+</table>
+<p>
+The XQuery use case actually uses a different schema for the two shops.
+</p>
+<h2>
+<a id="S7.">Future Work</a>
+</h2>
+<p>
+In the introduction we mentioned that besides data access, we believe that concurrency and security are the two other obvious candidates for promotion to full language support. The current story for both concurrency and security is as disheartening as it is for data access. Languages such as C# or Java provide only crude support for concurrent programming. Their <code>lock(x)s</code> statement is (roughly) just syntactic sugar for <code>Monitor.Enter(x); try{s}finally{Monitor.Exit(x);}</code>, but apart from that the programmer is left unsupported and has to explicitly create and start threads, maintain reader/writer locks, mutexes, apartment states, lock cookies, etc.
+</p>
+<p>
+Unfortunately today's applications are increasingly dealing with complicated concurrent scenarios; for example, complex orchestration code for webservices. Clearly we need better, high-level support for concurrency and security to facilitate writing of such code. Interestingly there are several proposals for orchestration languages  that are based on an abstract model of concurrent communication called the Pi-calculus <a class="bibref" href="#Pi">
+<b>[Pi Calculus]</b>
+</a> ; examples include BPEL4WS <a class="bibref" href="#BPEL4WS">
+<b>[BPEL4WS]</b>
+</a>  and WSCI <a class="bibref" href="#WSCI">
+<b>[WSCI]</b>
+</a> . 
+</p>
+<p>
+Both these languages unfortunately use XML for their concrete syntax and lack many of the other desired features of a concrete programming language. An interesting experiment is to add support for join patterns (the join-calculus <a class="bibref" href="#join">
+<b>[Join Calculus]</b>
+</a>  is a programming oriented dialect of the Pi-calculus) to Xen, based on the Polyphonic C# proposal <a class="bibref" href="#poly">
+<b>[Polyphonic C#]</b>
+</a> . The resulting language begins to approach the kind of programming language that we envisage is necessary to program advanced webservices. 
+</p>
+<h2>
+<a id="S8.">Conclusions</a>
+</h2>
+<p>
+In this paper we have argued that by generalizing the type system and language syntax, it is possible for a modern object-oriented (<i>circles</i>) language to provide first-class support for manipulating both relational (<i>rectangles</i>) and hierarchical data (<i>triangles</i>) in a sound and statically typed manner. We have demonstrated this by describing Xen, our hypothetical extension of C#.
+</p>
+<p>
+Our approach is to build on top of current object data-models and in particular we do not try to simply bolt-on naively the entire XML data model or XSD "type-system". We have argued carefully in this paper why such an approach is hampered by serious incompatibilities between the data-models. In contrast we consider XML 1.0 basically as syntax for serialized object graphs that can be used inside the language as a convenient way to denote object instances, or externally as a wire format for data interchange. In the latter case we assume that the other end will have some independent way to describe the set of allowable documents.
+</p>
+
+
+<h2 class="acknowlHeader">
+<a id="S.Acknowledgements">Acknowledgements</a>
+</h2>
+<div class="acknowl">
+<p>
+We should like to acknowledge the hard work of the WebData language team consisting of William Adams, Joyce Chen, Kirill Gavrylyuk, David Hicks, Steve Lindeman, Chris Lovett, Frank Mantek, Wolfgang Manousek, Neetu Rajpal, Herman Venter, and Matt Warren, and the MSR Cambridge Programming Principles and Tools group, in particular Luca Cardelli, Nick Benton, Claudio Russo, Cedric Fournet and Alain Frisch. Special thanks to Chris and Steve for the original version of the XQuery Use Cases, and to Dare Obasanjo for his insightful comments. Gavin Bierman was supported by EU projects Appsem II and Pepito.
+</p>
+</div>
+<h2 class="bibliogHeader">
+<a id="S.Bibliography">Bibliography</a>
+</h2>
+<dl class="bibliog">
+
+<dt class="bib">
+<a id="CSharp" />
+<b>[C# Specification]</b>
+</dt>
+<dd class="pub">
+<a href="http://download.microsoft.com/download/0/a/c/0acb3585-3f3f-4169-ad61-efc9f0176788/CSharp.zip">http://download.microsoft.com/download/0/a/c/0acb3585-3f3f-4169-ad61-efc9f0176788/CSharp.zip</a>
+</dd>
+
+
+<dt class="bib">
+<a id="FournetAbadi" />
+<b>[Fournet and Abadi]</b>
+</dt>
+<dd class="pub">
+Cédric Fournet and Martin Abadi. <i>Access Control based on Execution History.</i> Proceedings of the 10th Annual  Network and Distributed System Security Symposium. February 2003. <a href="http://research.microsoft.com/~fournet/papers/access-control-based-on-execution-history-ndss.pdf">http://research.microsoft.com/~fournet/papers/access-control-based-on-execution-history-ndss.pdf</a>
+</dd>
+
+
+<dt class="bib">
+<a id="Java" />
+<b>[Java Language Specification]</b>
+</dt>
+<dd class="pub">
+<a href="http://java.sun.com/docs/books/jls/second_edition/html/j.title.doc.html">http://java.sun.com/docs/books/jls/second_edition/html/j.title.doc.html</a>
+</dd>
+
+
+<dt class="bib">
+<a id="JDBC" />
+<b>[JDBC]</b>
+</dt>
+<dd class="pub">
+<a href="http://java.sun.com/products/jdbc/">http://java.sun.com/products/jdbc/</a>
+</dd>
+
+
+<dt class="bib">
+<a id="ADO" />
+<b>[ADO .Net]</b>
+</dt>
+<dd class="pub">
+<a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpguide/html/cpconoverviewofadonet.asp">http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpguide/html/cpconoverviewofadonet.asp</a>
+</dd>
+
+
+<dt class="bib">
+<a id="xsd" />
+<b>[xsd.exe]</b>
+</dt>
+<dd class="pub">
+<a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cptools/html/cpconxmlschemadefinitiontoolxsdexe.asp">http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cptools/html/cpconxmlschemadefinitiontoolxsdexe.asp</a>
+</dd>
+
+
+<dt class="bib">
+<a id="JAXB" />
+<b>[JAXB]</b>
+</dt>
+<dd class="pub">
+<a href="http://java.sun.com/xml/jaxb/">http://java.sun.com/xml/jaxb/</a>
+</dd>
+
+
+<dt class="bib">
+<a id="XMLBeans" />
+<b>[XMLBeans]</b>
+</dt>
+<dd class="pub">
+<a href="http://dev2dev.bea.com/technologies/xmlbeans/index.jsp">http://dev2dev.bea.com/technologies/xmlbeans/index.jsp</a>
+</dd>
+
+
+<dt class="bib">
+<a id="DoTW" />
+<b>[Data On The Web]</b>
+</dt>
+<dd class="pub">
+S. Abiteboul, P. Buneman and D. Suciu. <i>Data On The Web.</i> Morgan
+Kaufmann, 2000.
+</dd>
+
+
+<dt class="bib">
+<a id="XPath" />
+<b>[XPath]</b>
+</dt>
+<dd class="pub">
+<a href="http://www.w3.org/TR/xpath">http://www.w3.org/TR/xpath</a>
+</dd>
+
+
+<dt class="bib">
+<a id="XML" />
+<b>[XML 1.0]</b>
+</dt>
+<dd class="pub">
+<a href="http://www.w3.org/TR/REC-xml">http://www.w3.org/TR/REC-xml</a>
+</dd>
+
+
+<dt class="bib">
+<a id="UseCases" />
+<b>[XQuery Use Cases]</b>
+</dt>
+<dd class="pub">
+<a href="http://www.w3.org/TR/xquery-use-cases/">http://www.w3.org/TR/xquery-use-cases/</a>
+</dd>
+
+
+<dt class="bib">
+<a id="Dave" />
+<b>[Impedance Mismatch]</b>
+</dt>
+<dd class="pub">
+Dave Thomas. <i>The Impedance Imperative Tuples + Objects + Infosets = Too Much Stuff!</i>. JOT, 2003 Vol. 2, No. 5, September-October 2003. <a href="http://www.jot.fm/issues/issue_2003_09/column1.pdf">http://www.jot.fm/issues/issue_2003_09/column1.pdf</a>
+</dd>
+
+
+<dt class="bib">
+<a id="Essence" />
+<b>[The Essence of XML]</b>
+</dt>
+<dd class="pub">
+Jerome Simeon and Philip Wadler. <i>The Essence of XML.</i>  Proceedings of POPL 2003, New Orleans, January 2003. 
+<a href="http://homepages.inf.ed.ac.uk/wadler/topics/xml.html#xml-essence">http://homepages.inf.ed.ac.uk/wadler/topics/xml.html#xml-essence</a>
+</dd>
+
+
+<dt class="bib">
+<a id="ASFSDF" />
+<b>[ASF/SDF]</b>
+</dt>
+<dd class="pub">
+<a href="http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/MetaEnvironment ">http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/MetaEnvironment </a>
+</dd>
+
+
+<dt class="bib">
+<a id="DPCOOL" />
+<b>[Unifying Tables, Objects and Documents]</b>
+</dt>
+<dd class="pub">
+Erik Meijer and Wolfram Schulte. <i>Unifying Tables, Objects and Documents.</i> Proceedings DP-COOL 2003. 
+<a href="http://www.research.microsoft.com/~emeijer/Papers/XS.pdf">http://www.research.microsoft.com/~emeijer/Papers/XS.pdf</a>
+</dd>
+
+
+<dt class="bib">
+<a id="PLDI" />
+<b>[The Meaning of Xen]</b>
+</dt>
+<dd class="pub">
+Erik Meijer, Wolfram Schulte, and Gavin Bierman. <i>The Meaning of
+Xen.</i> Paper in preparation.
+</dd>
+
+
+<dt class="bib">
+<a id="Xtatic" />
+<b>[Xtatic]</b>
+</dt>
+<dd class="pub">
+<a href="http://www.cis.upenn.edu/~bcpierce/xtatic/">http://www.cis.upenn.edu/~bcpierce/xtatic/</a>
+</dd>
+
+
+<dt class="bib">
+<a id="CDuce" />
+<b>[CDuce]</b>
+</dt>
+<dd class="pub">
+<a href="http://www.cduce.org/">http://www.cduce.org/</a>
+</dd>
+
+
+<dt class="bib">
+<a id="BPEL4WS" />
+<b>[BPEL4WS]</b>
+</dt>
+<dd class="pub">
+<a href="ftp://www6.software.ibm.com/software/developer/library/ws-bpel11.pdf">ftp://www6.software.ibm.com/software/developer/library/ws-bpel11.pdf</a>
+</dd>
+
+
+<dt class="bib">
+<a id="WSCI" />
+<b>[WSCI]</b>
+</dt>
+<dd class="pub">
+<a href="http://www.w3.org/TR/wsci/">http://www.w3.org/TR/wsci/</a>
+</dd>
+
+
+<dt class="bib">
+<a id="Pi" />
+<b>[Pi Calculus]</b>
+</dt>
+<dd class="pub">
+R. Milner. <i>Communicating with Mobile Agents: The pi-Calculus.</i> Cambridge University Press, Cambridge, 1999.
+</dd>
+
+
+<dt class="bib">
+<a id="join" />
+<b>[Join Calculus]</b>
+</dt>
+<dd class="pub">
+<a href="http://pauillac.inria.fr/join/">http://pauillac.inria.fr/join/</a>
+</dd>
+
+
+<dt class="bib">
+<a id="poly" />
+<b>[Polyphonic C#]</b>
+</dt>
+<dd class="pub">
+Nick Benton, Luca Cardelli and Cedric Fournet. <i>Modern Concurrency Abstractions for C#</i>. In B. Magnusson (Ed.), Proceedings ECOOP 2002. LNCS 2374, Springer-Verlag. 
+<a href="http://research.microsoft.com/~nick/polyphony/PolyphonyECOOP.A4.pdf">http://research.microsoft.com/~nick/polyphony/PolyphonyECOOP.A4.pdf</a>
+</dd>
+
+</dl>
+
+</body>
+</html>
