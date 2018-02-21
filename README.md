@@ -1,6 +1,6 @@
 This is the public repo of my research work. It consists of two folders
 
-- [Papers](/Papers) - All articles, conference papers, technical reports etc
+- [Papers](https://github.com/GavinBierman/gavinbierman.github.io/tree/master/Papers) - All articles, conference papers, technical reports etc
 - [Talks](/Talks)  - Some of the recent talks that I have given 
 
 Enjoy!
